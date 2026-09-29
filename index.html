@@ -3,297 +3,166 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
-
-<title>MizaxEngine — R6 Animation Studio</title>
+<title>MizaxEngine - R6 Animation Studio</title>
 
 <style>
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-    -webkit-tap-highlight-color:transparent;
+*{box-sizing:border-box}
+body{
+ margin:0;
+ overflow:hidden;
+ background:#090909;
+ color:#eee;
+ font-family:Arial,sans-serif
 }
-
-html,body{
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    background:#090909;
-    color:#fff;
-    font-family:Arial,sans-serif;
-}
-
 #app{
-    width:100%;
-    height:100%;
-    display:flex;
-    flex-direction:column;
+ display:flex;
+ width:100vw;
+ height:100vh
 }
-
-/* TOP BAR */
-#topbar{
-    height:55px;
-    min-height:55px;
-    background:#111;
-    border-bottom:1px solid #3a0000;
-    display:flex;
-    align-items:center;
-    padding:0 12px;
-    gap:12px;
-    z-index:10;
+#left,#right{
+ width:230px;
+ background:#111;
+ border-color:#292929;
+ border-style:solid;
+ position:relative;
+ z-index:5
 }
+#left{border-width:0 1px 0 0}
+#right{border-width:0 0 0 1px}
 
-.logo{
-    color:#ff2020;
-    font-size:19px;
-    font-weight:bold;
-    white-space:nowrap;
+#center{
+ flex:1;
+ position:relative;
+ min-width:0;
+ background:#181818
 }
-
-.logo span{
-    color:#fff;
-}
-
-button{
-    border:1px solid #550000;
-    background:#171717;
-    color:#fff;
-    border-radius:6px;
-    padding:8px 12px;
-    cursor:pointer;
-}
-
-button:hover{
-    background:#280000;
-}
-
-button.active{
-    background:#d00000;
-    border-color:#ff3030;
-}
-
-#playBtn{
-    background:#b90000;
-}
-
-/* MAIN */
-#main{
-    flex:1;
-    min-height:0;
-    display:flex;
-}
-
-/* LEFT */
-#leftPanel{
-    width:190px;
-    min-width:190px;
-    background:#101010;
-    border-right:1px solid #330000;
-    overflow:auto;
-}
-
-.panelTitle{
-    padding:12px;
-    color:#ff3030;
-    font-weight:bold;
-    border-bottom:1px solid #300000;
-}
-
-#boneList{
-    padding:8px;
-}
-
-.bone{
-    padding:9px 10px;
-    margin-bottom:4px;
-    background:#181818;
-    border-radius:5px;
-    cursor:pointer;
-    font-size:13px;
-}
-
-.bone:hover{
-    background:#270000;
-}
-
-.bone.selected{
-    background:#b40000;
-}
-
-/* VIEWPORT */
 #viewport{
-    position:relative;
-    flex:1;
-    min-width:0;
-    background:#080808;
+ position:absolute;
+ inset:0
 }
-
 canvas{
-    display:block;
-    width:100%;
-    height:100%;
+ display:block
 }
 
-#loading{
-    position:absolute;
-    inset:0;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
-    background:#080808;
-    color:#ff3030;
-    z-index:5;
-    padding:20px;
+.title{
+ padding:14px;
+ font-size:17px;
+ font-weight:bold;
+ color:#ff3030;
+ border-bottom:1px solid #292929
 }
-
-/* TOOLS */
-#tools{
-    position:absolute;
-    top:12px;
-    left:12px;
-    display:flex;
-    gap:5px;
-    flex-wrap:wrap;
-    z-index:3;
+.section{
+ padding:10px;
+ border-bottom:1px solid #292929
 }
-
-.tool{
-    width:40px;
-    height:36px;
-    padding:0;
-    font-size:16px;
+.section b{
+ display:block;
+ margin-bottom:8px;
+ font-size:12px;
+ color:#aaa
 }
-
-/* RIGHT */
-#rightPanel{
-    width:210px;
-    min-width:210px;
-    background:#101010;
-    border-left:1px solid #330000;
-    overflow:auto;
+button{
+ width:100%;
+ padding:9px;
+ margin-bottom:6px;
+ border:1px solid #333;
+ background:#1d1d1d;
+ color:#eee;
+ border-radius:5px
 }
-
-.prop{
-    padding:10px;
-    border-bottom:1px solid #252525;
+button:hover{
+ background:#292929
 }
-
-.propTitle{
-    color:#ff3333;
-    font-size:12px;
-    margin-bottom:7px;
-    font-weight:bold;
-}
-
-.row{
-    display:flex;
-    gap:5px;
-    margin-bottom:5px;
-}
-
-.row span{
-    width:22px;
-    color:#aaa;
-    font-size:12px;
-    padding-top:7px;
-}
-
 input{
-    width:100%;
-    min-width:0;
-    background:#181818;
-    border:1px solid #333;
-    color:#fff;
-    border-radius:4px;
-    padding:6px;
+ width:100%;
+ background:#191919;
+ color:white;
+ border:1px solid #333;
+ padding:7px;
+ margin-bottom:5px
+}
+.bone{
+ padding:8px;
+ background:#181818;
+ border:1px solid #282828;
+ margin-bottom:4px;
+ border-radius:4px;
+ cursor:pointer;
+ font-size:13px
+}
+.bone:hover,.bone.active{
+ background:#3b1111;
+ border-color:#ff3030
 }
 
-/* TIMELINE */
 #timeline{
-    height:185px;
-    min-height:185px;
-    background:#0d0d0d;
-    border-top:1px solid #400000;
-    overflow:auto;
+ position:absolute;
+ left:0;
+ right:0;
+ bottom:0;
+ height:145px;
+ background:#0d0d0d;
+ border-top:1px solid #333;
+ z-index:4
 }
-
 #timelineTop{
-    height:42px;
-    display:flex;
-    align-items:center;
-    gap:8px;
-    padding:6px 10px;
-    border-bottom:1px solid #292929;
+ height:35px;
+ display:flex;
+ align-items:center;
+ gap:6px;
+ padding:5px;
+ border-bottom:1px solid #292929
 }
-
-#frameLabel{
-    color:#ff3030;
-    font-weight:bold;
+#timelineTop button{
+ width:auto;
+ margin:0;
+ padding:5px 12px
 }
-
 #frames{
-    position:relative;
-    min-width:950px;
-    height:125px;
+ display:flex;
+ gap:4px;
+ padding:10px;
+ overflow-x:auto
 }
-
 .frame{
-    position:absolute;
-    top:20px;
-    width:14px;
-    height:14px;
-    background:#555;
-    transform:translateX(-50%) rotate(45deg);
-    cursor:pointer;
+ min-width:35px;
+ height:35px;
+ border:1px solid #333;
+ background:#191919;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ cursor:pointer;
+ border-radius:3px
+}
+.frame.active{
+ background:#8d1717;
+ border-color:#ff3030
 }
 
-.frame.key{
-    background:#ff2020;
+#status{
+ position:absolute;
+ top:8px;
+ left:8px;
+ padding:6px 9px;
+ background:#111d;
+ border:1px solid #333;
+ border-radius:4px;
+ font-size:11px;
+ z-index:10
 }
 
-.frame.current{
-    box-shadow:0 0 0 2px #fff;
-}
-
-.frameNumber{
-    position:absolute;
-    top:2px;
-    transform:translateX(-50%);
-    color:#777;
-    font-size:10px;
-}
-
-/* MOBILE */
 @media(max-width:700px){
-
-    #leftPanel{
-        width:125px;
-        min-width:125px;
-    }
-
-    #rightPanel{
-        width:145px;
-        min-width:145px;
-    }
-
-    .logo{
-        font-size:14px;
-    }
-
-    #topbar{
-        gap:5px;
-        padding:0 6px;
-    }
-
-    #topbar button{
-        padding:7px 8px;
-        font-size:11px;
-    }
-
-    .tool{
-        width:35px;
-    }
+ #left,#right{
+  width:170px
+ }
+ .title{
+  font-size:13px;
+  padding:10px
+ }
+ .section{
+  padding:7px
+ }
 }
 </style>
 </head>
@@ -302,168 +171,86 @@ input{
 
 <div id="app">
 
-    <div id="topbar">
+<div id="left">
+ <div class="title">MizaxEngine</div>
 
-        <div class="logo">
-            Mizax<span>Engine</span>
-        </div>
+ <div class="section">
+  <b>R6 BODY</b>
 
-        <button id="playBtn">▶ Play</button>
-        <button id="addKeyBtn">◆ Key</button>
-        <button id="deleteKeyBtn">Delete</button>
+  <div class="bone" data-bone="Head">Head</div>
+  <div class="bone" data-bone="Torso">Torso</div>
+  <div class="bone" data-bone="Left Arm">Left Arm</div>
+  <div class="bone" data-bone="Right Arm">Right Arm</div>
+  <div class="bone" data-bone="Left Leg">Left Leg</div>
+  <div class="bone" data-bone="Right Leg">Right Leg</div>
+ </div>
 
-        <div style="flex:1"></div>
+ <div class="section">
+  <b>MODEL</b>
+  <button id="resetBtn">Reset Camera</button>
+  <button id="reloadBtn">Reload FBX</button>
+ </div>
+</div>
 
-        <button id="resetBtn">Reset</button>
+<div id="center">
+ <div id="viewport"></div>
+ <div id="status">Loading dummy.fbx...</div>
 
-    </div>
+ <div id="timeline">
+  <div id="timelineTop">
+   <button id="playBtn">▶ Play</button>
+   <button id="stopBtn">■ Stop</button>
+   <span id="frameText">Frame: 0</span>
+  </div>
 
-    <div id="main">
+  <div id="frames">
+   <div class="frame active">0</div>
+   <div class="frame">1</div>
+   <div class="frame">2</div>
+   <div class="frame">3</div>
+   <div class="frame">4</div>
+   <div class="frame">5</div>
+   <div class="frame">6</div>
+   <div class="frame">7</div>
+   <div class="frame">8</div>
+   <div class="frame">9</div>
+   <div class="frame">10</div>
+  </div>
+ </div>
+</div>
 
-        <div id="leftPanel">
+<div id="right">
 
-            <div class="panelTitle">
-                R6 BODY
-            </div>
+ <div class="title">Properties</div>
 
-            <div id="boneList">
-                <div class="bone">Loading...</div>
-            </div>
+ <div class="section">
+  <b>ROTATION</b>
 
-        </div>
+  <label>X</label>
+  <input id="rx" type="number" value="0">
 
-        <div id="viewport">
+  <label>Y</label>
+  <input id="ry" type="number" value="0">
 
-            <div id="loading">
-                <div>
-                    <b>Loading R6...</b>
-                    <br><br>
-                    Loading dummy.fbx
-                </div>
-            </div>
+  <label>Z</label>
+  <input id="rz" type="number" value="0">
+ </div>
 
-            <div id="tools">
-                <button class="tool active" data-mode="rotate">↻</button>
-                <button class="tool" data-mode="translate">✥</button>
-                <button class="tool" data-mode="scale">⛶</button>
-            </div>
+ <div class="section">
+  <b>SCALE</b>
 
-        </div>
-
-        <div id="rightPanel">
-
-            <div class="panelTitle">
-                PROPERTIES
-            </div>
-
-            <div class="prop">
-
-                <div class="propTitle">
-                    POSITION
-                </div>
-
-                <div class="row">
-                    <span>X</span>
-                    <input id="px" type="number" step="0.01">
-                </div>
-
-                <div class="row">
-                    <span>Y</span>
-                    <input id="py" type="number" step="0.01">
-                </div>
-
-                <div class="row">
-                    <span>Z</span>
-                    <input id="pz" type="number" step="0.01">
-                </div>
-
-            </div>
-
-            <div class="prop">
-
-                <div class="propTitle">
-                    ROTATION
-                </div>
-
-                <div class="row">
-                    <span>X</span>
-                    <input id="rx" type="number" step="1">
-                </div>
-
-                <div class="row">
-                    <span>Y</span>
-                    <input id="ry" type="number" step="1">
-                </div>
-
-                <div class="row">
-                    <span>Z</span>
-                    <input id="rz" type="number" step="1">
-                </div>
-
-            </div>
-
-            <div class="prop">
-
-                <div class="propTitle">
-                    SCALE
-                </div>
-
-                <div class="row">
-                    <span>X</span>
-                    <input id="sx" type="number" step="0.01">
-                </div>
-
-                <div class="row">
-                    <span>Y</span>
-                    <input id="sy" type="number" step="0.01">
-                </div>
-
-                <div class="row">
-                    <span>Z</span>
-                    <input id="sz" type="number" step="0.01">
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <div id="timeline">
-
-        <div id="timelineTop">
-
-            <button id="prevFrame">◀</button>
-
-            <div id="frameLabel">
-                Frame: 0
-            </div>
-
-            <button id="nextFrame">▶</button>
-
-            <div style="flex:1"></div>
-
-            <span style="color:#777;font-size:12px">
-                30 FPS
-            </span>
-
-        </div>
-
-        <div id="frames"></div>
-
-    </div>
+  <input id="sx" type="number" value="1" step="0.1">
+  <input id="sy" type="number" value="1" step="0.1">
+  <input id="sz" type="number" value="1" step="0.1">
+ </div>
 
 </div>
 
+</div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/TransformControls.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
-
 
 <script>
 
@@ -471,1762 +258,324 @@ let scene;
 let camera;
 let renderer;
 let controls;
-let transform;
-
 let model = null;
-
-let bones = [];
 let selectedBone = null;
 
-let currentFrame = 0;
-let playing = false;
-
-const FPS = 30;
-const TOTAL_FRAMES = 60;
-
-const keyframes = {};
-
-
-/* =========================
-   INIT
-========================= */
+const viewport = document.getElementById("viewport");
+const statusBox = document.getElementById("status");
 
 init();
-
+loadFBX();
 
 function init(){
 
-    scene = new THREE.Scene();
+ scene = new THREE.Scene();
+ scene.background = new THREE.Color(0x181818);
 
-    scene.background = new THREE.Color(0x080808);
+ camera = new THREE.PerspectiveCamera(
+  45,
+  viewport.clientWidth / viewport.clientHeight,
+  0.1,
+  10000
+ );
 
+ camera.position.set(5,4,7);
 
-    camera = new THREE.PerspectiveCamera(
-        45,
-        1,
-        0.01,
-        1000
-    );
+ renderer = new THREE.WebGLRenderer({
+  antialias:true
+ });
 
-    camera.position.set(
-        7,
-        5,
-        8
-    );
+ renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+ renderer.setSize(viewport.clientWidth,viewport.clientHeight);
 
+ viewport.appendChild(renderer.domElement);
 
-    renderer = new THREE.WebGLRenderer({
-        antialias:true
-    });
+ controls = new THREE.OrbitControls(
+  camera,
+  renderer.domElement
+ );
 
-    renderer.setPixelRatio(
-        Math.min(window.devicePixelRatio,2)
-    );
+ controls.target.set(0,2,0);
+ controls.update();
 
-    document
-        .getElementById("viewport")
-        .appendChild(renderer.domElement);
+ const ambient = new THREE.AmbientLight(0xffffff,0.7);
+ scene.add(ambient);
 
+ const light = new THREE.DirectionalLight(0xffffff,1.2);
+ light.position.set(5,10,5);
+ scene.add(light);
 
-    controls = new THREE.OrbitControls(
-        camera,
-        renderer.domElement
-    );
+ const grid = new THREE.GridHelper(
+  20,
+  20,
+  0x555555,
+  0x292929
+ );
 
-    controls.enableDamping = true;
+ scene.add(grid);
 
+ window.addEventListener("resize",resize);
 
-    transform = new THREE.TransformControls(
-        camera,
-        renderer.domElement
-    );
-
-    scene.add(transform);
-
-
-    transform.addEventListener(
-        "dragging-changed",
-        function(event){
-
-            controls.enabled = !event.value;
-
-        }
-    );
-
-
-    /* LIGHT */
-
-    const ambient =
-        new THREE.AmbientLight(
-            0xffffff,
-            1.5
-        );
-
-    scene.add(ambient);
-
-
-    const light =
-        new THREE.DirectionalLight(
-            0xffffff,
-            2
-        );
-
-    light.position.set(
-        5,
-        10,
-        5
-    );
-
-    scene.add(light);
-
-
-    const redLight =
-        new THREE.PointLight(
-            0xff0000,
-            3,
-            15
-        );
-
-    redLight.position.set(
-        0,
-        3,
-        3
-    );
-
-    scene.add(redLight);
-
-
-    /* GRID */
-
-    const grid =
-        new THREE.GridHelper(
-            20,
-            20,
-            0x550000,
-            0x222222
-        );
-
-    scene.add(grid);
-
-
-    loadFBX();
-
-    createTimeline();
-
-    setupUI();
-
-    window.addEventListener(
-        "resize",
-        resize
-    );
-
-    resize();
-
-    animate();
+ animate();
 }
-
-
-/* =========================
-   FBX LOADER
-========================= */
-
-function loadFBX(){
-
-    const loader =
-        new THREE.FBXLoader();
-
-
-    /*
-       IMPORTANT
-
-       dummy.fbx is in the SAME folder
-       as index.html.
-
-       So we use:
-
-       ./dummy.fbx
-    */
-
-    loader.load(
-
-        "./dummy.fbx",
-
-        function(object){
-
-            model = object;
-
-            model.scale.set(
-                0.01,
-                0.01,
-                0.01
-            );
-
-
-            scene.add(model);
-
-
-            normalizeR6();
-
-            createFallbackHead();
-
-            centerModel();
-
-            buildBoneList();
-
-            selectBone(
-                bones[0]
-            );
-
-
-            document
-                .getElementById("loading")
-                .style.display = "none";
-
-
-        },
-
-        function(xhr){
-
-            if(xhr.total){
-
-                const percent =
-                    Math.round(
-                        xhr.loaded /
-                        xhr.total *
-                        100
-                    );
-
-                document
-                    .getElementById("loading")
-                    .innerHTML =
-                    "<b>Loading FBX...</b><br><br>" +
-                    percent +
-                    "%";
-            }
-
-        },
-
-        function(error){
-
-            console.error(
-                "FBX ERROR:",
-                error
-            );
-
-            document
-                .getElementById("loading")
-                .innerHTML =
-                "<b>FBX ERROR</b><br><br>" +
-                "dummy.fbx tidak dapat dimuat." +
-                "<br><br>" +
-                "Pastikan index.html dan dummy.fbx berada dalam folder yang sama.";
-
-        }
-
-    );
-
-}
-
-
-/* =========================
-   R6 NORMALIZER
-========================= */
-
-function normalizeR6(){
-
-    if(!model)
-        return;
-
-
-    bones = [];
-
-
-    model.traverse(
-        function(child){
-
-            if(
-                child.isBone ||
-                child.type === "Bone"
-            ){
-
-                bones.push(child);
-
-            }
-
-        }
-    );
-
-
-    /*
-       Kalau FBX punya bone,
-       gunakan bone tersebut.
-
-       Kalau tidak,
-       ambil object/mesh yang relevan.
-    */
-
-    if(bones.length === 0){
-
-        model.traverse(
-            function(child){
-
-                if(
-                    child.isMesh ||
-                    child.type === "Group"
-                ){
-
-                    if(
-                        child.name &&
-                        child.name !== model.name
-                    ){
-
-                        bones.push(child);
-
-                    }
-
-                }
-
-            }
-        );
-
-    }
-
-
-    /*
-       Nama R6.
-    */
-
-    bones.forEach(
-        function(bone){
-
-            const n =
-                bone.name.toLowerCase();
-
-
-            if(
-                n.includes("head")
-            ){
-
-                bone.userData.r6Name =
-                    "Head";
-
-            }
-
-            else if(
-                n.includes("torso") ||
-                n.includes("body") ||
-                n.includes("chest")
-            ){
-
-                bone.userData.r6Name =
-                    "Torso";
-
-            }
-
-            else if(
-                n.includes("left") &&
-                n.includes("arm")
-            ){
-
-                bone.userData.r6Name =
-                    "Left Arm";
-
-            }
-
-            else if(
-                n.includes("right") &&
-                n.includes("arm")
-            ){
-
-                bone.userData.r6Name =
-                    "Right Arm";
-
-            }
-
-            else if(
-                n.includes("left") &&
-                n.includes("leg")
-            ){
-
-                bone.userData.r6Name =
-                    "Left Leg";
-
-            }
-
-            else if(
-                n.includes("right") &&
-                n.includes("leg")
-            ){
-
-                bone.userData.r6Name =
-                    "Right Leg";
-
-            }
-
-        }
-    );
-
-}
-
-
-/* =========================
-   FALLBACK HEAD
-========================= */
-
-function createFallbackHead(){
-
-    if(!model)
-        return;
-
-
-    let torso = null;
-
-
-    model.traverse(
-        function(child){
-
-            if(
-                child.name &&
-                (
-                    child.name
-                    .toLowerCase()
-                    .includes("torso")
-                    ||
-                    child.name
-                    .toLowerCase()
-                    .includes("body")
-                )
-            ){
-
-                torso = child;
-
-            }
-
-        }
-    );
-
-
-    /*
-       If FBX already contains a head,
-       don't create another one.
-    */
-
-    let existingHead = false;
-
-
-    model.traverse(
-        function(child){
-
-            if(
-                child.name &&
-                child.name
-                .toLowerCase()
-                .includes("head")
-            ){
-
-                existingHead = true;
-
-            }
-
-        }
-    );
-
-
-    if(existingHead)
-        return;
-
-
-    if(!torso)
-        return;
-
-
-    const geometry =
-        new THREE.BoxGeometry(
-            2,
-            2,
-            2
-        );
-
-
-    const material =
-        new THREE.MeshStandardMaterial({
-            color:0xffc7a8
-        });
-
-
-    const head =
-        new THREE.Mesh(
-            geometry,
-            material
-        );
-
-
-    head.name = "Head";
-
-    head.userData.r6Name =
-        "Head";
-
-
-    head.position.set(
-        0,
-        2.1,
-        0
-    );
-
-
-    torso.add(head);
-
-
-    bones.unshift(head);
-
-}
-
-
-/* =========================
-   CENTER MODEL
-========================= */
-
-function centerModel(){
-
-    if(!model)
-        return;
-
-
-    const box =
-        new THREE.Box3()
-        .setFromObject(model);
-
-
-    const center =
-        box.getCenter(
-            new THREE.Vector3()
-        );
-
-
-    model.position.sub(
-        center
-    );
-
-
-    model.position.y += 1.5;
-
-
-    controls.target.set(
-        0,
-        1.5,
-        0
-    );
-
-}
-
-
-/* =========================
-   BONE LIST
-========================= */
-
-function buildBoneList(){
-
-    const list =
-        document.getElementById(
-            "boneList"
-        );
-
-
-    list.innerHTML = "";
-
-
-    const r6Order = [
-        "Head",
-        "Torso",
-        "Left Arm",
-        "Right Arm",
-        "Left Leg",
-        "Right Leg"
-    ];
-
-
-    const used = [];
-
-
-    r6Order.forEach(
-        function(r6Name){
-
-            const bone =
-                bones.find(
-                    function(b){
-
-                        return (
-                            b.userData.r6Name
-                            ===
-                            r6Name
-                        );
-
-                    }
-                );
-
-
-            if(bone){
-
-                addBoneButton(
-                    bone,
-                    r6Name
-                );
-
-                used.push(bone);
-
-            }
-
-        }
-    );
-
-
-    /*
-       Add anything else only if
-       no R6 match exists.
-    */
-
-    bones.forEach(
-        function(bone){
-
-            if(
-                used.indexOf(bone)
-                ===
-                -1
-            ){
-
-                addBoneButton(
-                    bone,
-                    bone.name
-                );
-
-            }
-
-        }
-    );
-
-}
-
-
-function addBoneButton(
-    bone,
-    name
-){
-
-    const list =
-        document.getElementById(
-            "boneList"
-        );
-
-
-    const div =
-        document.createElement(
-            "div"
-        );
-
-
-    div.className =
-        "bone";
-
-
-    div.textContent =
-        name;
-
-
-    div.onclick =
-        function(){
-
-            selectBone(bone);
-
-        };
-
-
-    bone.userData.ui =
-        div;
-
-
-    list.appendChild(div);
-
-}
-
-
-/* =========================
-   SELECT BONE
-========================= */
-
-function selectBone(bone){
-
-    if(!bone)
-        return;
-
-
-    selectedBone =
-        bone;
-
-
-    bones.forEach(
-        function(b){
-
-            if(b.userData.ui){
-
-                b.userData.ui
-                    .classList
-                    .remove(
-                        "selected"
-                    );
-
-            }
-
-        }
-    );
-
-
-    if(bone.userData.ui){
-
-        bone.userData.ui
-            .classList
-            .add(
-                "selected"
-            );
-
-    }
-
-
-    transform.attach(
-        bone
-    );
-
-
-    updateProperties();
-
-}
-
-
-/* =========================
-   PROPERTIES
-========================= */
-
-function updateProperties(){
-
-    if(!selectedBone)
-        return;
-
-
-    const p =
-        selectedBone.position;
-
-
-    const r =
-        selectedBone.rotation;
-
-
-    const s =
-        selectedBone.scale;
-
-
-    setValue(
-        "px",
-        p.x
-    );
-
-    setValue(
-        "py",
-        p.y
-    );
-
-    setValue(
-        "pz",
-        p.z
-    );
-
-
-    setValue(
-        "rx",
-        THREE.MathUtils.radToDeg(
-            r.x
-        )
-    );
-
-    setValue(
-        "ry",
-        THREE.MathUtils.radToDeg(
-            r.y
-        )
-    );
-
-    setValue(
-        "rz",
-        THREE.MathUtils.radToDeg(
-            r.z
-        )
-    );
-
-
-    setValue(
-        "sx",
-        s.x
-    );
-
-    setValue(
-        "sy",
-        s.y
-    );
-
-    setValue(
-        "sz",
-        s.z
-    );
-
-}
-
-
-function setValue(
-    id,
-    value
-){
-
-    document.getElementById(
-        id
-    ).value =
-        Number(value).toFixed(3);
-
-}
-
-
-function propertyInput(
-    id,
-    callback
-){
-
-    document
-        .getElementById(id)
-        .addEventListener(
-            "change",
-            callback
-        );
-
-}
-
-
-propertyInput(
-    "px",
-    function(){
-
-        if(selectedBone)
-            selectedBone.position.x =
-                parseFloat(this.value);
-
-    }
-);
-
-propertyInput(
-    "py",
-    function(){
-
-        if(selectedBone)
-            selectedBone.position.y =
-                parseFloat(this.value);
-
-    }
-);
-
-propertyInput(
-    "pz",
-    function(){
-
-        if(selectedBone)
-            selectedBone.position.z =
-                parseFloat(this.value);
-
-    }
-);
-
-
-propertyInput(
-    "rx",
-    function(){
-
-        if(selectedBone)
-            selectedBone.rotation.x =
-                THREE.MathUtils.degToRad(
-                    parseFloat(this.value)
-                );
-
-    }
-);
-
-propertyInput(
-    "ry",
-    function(){
-
-        if(selectedBone)
-            selectedBone.rotation.y =
-                THREE.MathUtils.degToRad(
-                    parseFloat(this.value)
-                );
-
-    }
-);
-
-propertyInput(
-    "rz",
-    function(){
-
-        if(selectedBone)
-            selectedBone.rotation.z =
-                THREE.MathUtils.degToRad(
-                    parseFloat(this.value)
-                );
-
-    }
-);
-
-
-propertyInput(
-    "sx",
-    function(){
-
-        if(selectedBone)
-            selectedBone.scale.x =
-                parseFloat(this.value);
-
-    }
-);
-
-propertyInput(
-    "sy",
-    function(){
-
-        if(selectedBone)
-            selectedBone.scale.y =
-                parseFloat(this.value);
-
-    }
-);
-
-propertyInput(
-    "sz",
-    function(){
-
-        if(selectedBone)
-            selectedBone.scale.z =
-                parseFloat(this.value);
-
-    }
-);
-
-
-/* =========================
-   TOOLS
-========================= */
-
-document
-    .querySelectorAll(".tool")
-    .forEach(
-        function(btn){
-
-            btn.onclick =
-                function(){
-
-                    document
-                        .querySelectorAll(
-                            ".tool"
-                        )
-                        .forEach(
-                            b =>
-                            b.classList
-                            .remove(
-                                "active"
-                            )
-                        );
-
-
-                    btn.classList
-                        .add(
-                            "active"
-                        );
-
-
-                    transform.setMode(
-                        btn.dataset.mode
-                    );
-
-                };
-
-        }
-    );
-
-
-/* =========================
-   TIMELINE
-========================= */
-
-function createTimeline(){
-
-    const container =
-        document.getElementById(
-            "frames"
-        );
-
-
-    container.innerHTML = "";
-
-
-    for(
-        let i = 0;
-        i <= TOTAL_FRAMES;
-        i++
-    ){
-
-        const x =
-            30 +
-            i * 15;
-
-
-        const label =
-            document.createElement(
-                "div"
-            );
-
-
-        label.className =
-            "frameNumber";
-
-
-        label.style.left =
-            x + "px";
-
-
-        label.textContent =
-            i;
-
-
-        container.appendChild(
-            label
-        );
-
-
-        const frame =
-            document.createElement(
-                "div"
-            );
-
-
-        frame.className =
-            "frame";
-
-
-        frame.style.left =
-            x + "px";
-
-
-        frame.dataset.frame =
-            i;
-
-
-        frame.onclick =
-            function(){
-
-                setFrame(
-                    parseInt(
-                        this.dataset.frame
-                    )
-                );
-
-            };
-
-
-        container.appendChild(
-            frame
-        );
-
-    }
-
-
-    updateTimeline();
-
-}
-
-
-function updateTimeline(){
-
-    document.getElementById(
-        "frameLabel"
-    ).textContent =
-        "Frame: " +
-        currentFrame;
-
-
-    document
-        .querySelectorAll(
-            ".frame"
-        )
-        .forEach(
-            function(el){
-
-                const frame =
-                    parseInt(
-                        el.dataset.frame
-                    );
-
-
-                el.classList
-                    .toggle(
-                        "current",
-                        frame ===
-                        currentFrame
-                    );
-
-
-                const hasKey =
-                    keyframes[
-                        frame
-                    ] !== undefined;
-
-
-                el.classList
-                    .toggle(
-                        "key",
-                        hasKey
-                    );
-
-            }
-        );
-
-}
-
-
-/* =========================
-   KEYFRAME
-========================= */
-
-document
-    .getElementById(
-        "addKeyBtn"
-    )
-    .onclick =
-    function(){
-
-        addKeyframe(
-            currentFrame
-        );
-
-    };
-
-
-function addKeyframe(frame){
-
-    if(!selectedBone)
-        return;
-
-
-    if(!keyframes[frame])
-        keyframes[frame] = {};
-
-
-    keyframes[frame][
-        getBoneKey(
-            selectedBone
-        )
-    ] = {
-
-        position:
-            selectedBone.position.clone(),
-
-        quaternion:
-            selectedBone.quaternion.clone(),
-
-        scale:
-            selectedBone.scale.clone()
-
-    };
-
-
-    updateTimeline();
-
-}
-
-
-/* =========================
-   DELETE KEY
-========================= */
-
-document
-    .getElementById(
-        "deleteKeyBtn"
-    )
-    .onclick =
-    function(){
-
-        if(
-            keyframes[currentFrame]
-            &&
-            selectedBone
-        ){
-
-            delete keyframes[
-                currentFrame
-            ][
-                getBoneKey(
-                    selectedBone
-                )
-            ];
-
-
-            updateTimeline();
-
-        }
-
-    };
-
-
-function getBoneKey(
-    bone
-){
-
-    return (
-        bone.userData.r6Name
-        ||
-        bone.name
-    );
-
-}
-
-
-/* =========================
-   SET FRAME
-========================= */
-
-function setFrame(frame){
-
-    frame =
-        Math.max(
-            0,
-            Math.min(
-                TOTAL_FRAMES,
-                frame
-            )
-        );
-
-
-    currentFrame =
-        frame;
-
-
-    applyFrame(
-        frame
-    );
-
-
-    updateTimeline();
-
-    updateProperties();
-
-}
-
-
-/* =========================
-   APPLY FRAME
-========================= */
-
-function applyFrame(frame){
-
-    if(!selectedBone)
-        return;
-
-
-    const name =
-        getBoneKey(
-            selectedBone
-        );
-
-
-    let before = null;
-    let after = null;
-
-
-    for(
-        let i = frame;
-        i >= 0;
-        i--
-    ){
-
-        if(
-            keyframes[i]
-            &&
-            keyframes[i][name]
-        ){
-
-            before =
-                keyframes[i][name];
-
-            break;
-
-        }
-
-    }
-
-
-    for(
-        let i = frame;
-        i <= TOTAL_FRAMES;
-        i++
-    ){
-
-        if(
-            keyframes[i]
-            &&
-            keyframes[i][name]
-        ){
-
-            after =
-                keyframes[i][name];
-
-            break;
-
-        }
-
-    }
-
-
-    if(
-        before &&
-        after
-    ){
-
-        /*
-           Find actual frame positions
-        */
-
-        let beforeFrame =
-            frame;
-
-        let afterFrame =
-            frame;
-
-
-        for(
-            let i = frame;
-            i >= 0;
-            i--
-        ){
-
-            if(
-                keyframes[i]
-                &&
-                keyframes[i][name]
-            ){
-
-                beforeFrame =
-                    i;
-
-                break;
-
-            }
-
-        }
-
-
-        for(
-            let i = frame;
-            i <= TOTAL_FRAMES;
-            i++
-        ){
-
-            if(
-                keyframes[i]
-                &&
-                keyframes[i][name]
-            ){
-
-                afterFrame =
-                    i;
-
-                break;
-
-            }
-
-        }
-
-
-        if(
-            beforeFrame ===
-            afterFrame
-        ){
-
-            applyTransform(
-                selectedBone,
-                before
-            );
-
-        }
-        else{
-
-            const t =
-                (
-                    frame -
-                    beforeFrame
-                ) /
-                (
-                    afterFrame -
-                    beforeFrame
-                );
-
-
-            selectedBone.position
-                .lerpVectors(
-                    before.position,
-                    after.position,
-                    t
-                );
-
-
-            selectedBone.quaternion
-                .slerpQuaternions(
-                    before.quaternion,
-                    after.quaternion,
-                    t
-                );
-
-
-            selectedBone.scale
-                .lerpVectors(
-                    before.scale,
-                    after.scale,
-                    t
-                );
-
-        }
-
-    }
-
-    else if(before){
-
-        applyTransform(
-            selectedBone,
-            before
-        );
-
-    }
-
-    else if(after){
-
-        applyTransform(
-            selectedBone,
-            after
-        );
-
-    }
-
-}
-
-
-function applyTransform(
-    bone,
-    data
-){
-
-    bone.position.copy(
-        data.position
-    );
-
-    bone.quaternion.copy(
-        data.quaternion
-    );
-
-    bone.scale.copy(
-        data.scale
-    );
-
-}
-
-
-/* =========================
-   PLAY
-========================= */
-
-document
-    .getElementById(
-        "playBtn"
-    )
-    .onclick =
-    function(){
-
-        playing =
-            !playing;
-
-
-        this.textContent =
-            playing
-            ? "⏸ Pause"
-            : "▶ Play";
-
-    };
-
-
-let lastTime =
-    performance.now();
-
-
-function updatePlayback(){
-
-    if(!playing)
-        return;
-
-
-    const now =
-        performance.now();
-
-
-    const delta =
-        now -
-        lastTime;
-
-
-    if(
-        delta >=
-        1000 / FPS
-    ){
-
-        lastTime =
-            now;
-
-
-        currentFrame++;
-
-
-        if(
-            currentFrame >
-            TOTAL_FRAMES
-        ){
-
-            currentFrame = 0;
-
-        }
-
-
-        applyFrame(
-            currentFrame
-        );
-
-
-        updateTimeline();
-
-        updateProperties();
-
-    }
-
-}
-
-
-/* =========================
-   PREV / NEXT
-========================= */
-
-document
-    .getElementById(
-        "prevFrame"
-    )
-    .onclick =
-    function(){
-
-        setFrame(
-            currentFrame - 1
-        );
-
-    };
-
-
-document
-    .getElementById(
-        "nextFrame"
-    )
-    .onclick =
-    function(){
-
-        setFrame(
-            currentFrame + 1
-        );
-
-    };
-
-
-/* =========================
-   RESET
-========================= */
-
-document
-    .getElementById(
-        "resetBtn"
-    )
-    .onclick =
-    function(){
-
-        if(model){
-
-            model.position.set(
-                0,
-                1.5,
-                0
-            );
-
-        }
-
-
-        currentFrame = 0;
-
-        playing = false;
-
-        document
-            .getElementById(
-                "playBtn"
-            )
-            .textContent =
-            "▶ Play";
-
-
-        if(selectedBone){
-
-            selectedBone.position.set(
-                0,
-                0,
-                0
-            );
-
-            selectedBone.rotation.set(
-                0,
-                0,
-                0
-            );
-
-            selectedBone.scale.set(
-                1,
-                1,
-                1
-            );
-
-        }
-
-
-        updateProperties();
-
-        updateTimeline();
-
-    };
-
-
-/* =========================
-   UI
-========================= */
-
-function setupUI(){
-
-    /*
-       Keyboard shortcuts
-    */
-
-    window.addEventListener(
-        "keydown",
-        function(e){
-
-            if(e.code === "Space"){
-
-                e.preventDefault();
-
-                document
-                    .getElementById(
-                        "playBtn"
-                    )
-                    .click();
-
-            }
-
-            if(e.code === "ArrowLeft"){
-
-                setFrame(
-                    currentFrame - 1
-                );
-
-            }
-
-            if(e.code === "ArrowRight"){
-
-                setFrame(
-                    currentFrame + 1
-                );
-
-            }
-
-        }
-    );
-
-}
-
-
-/* =========================
-   RESIZE
-========================= */
 
 function resize(){
 
-    const viewport =
-        document.getElementById(
-            "viewport"
-        );
+ camera.aspect =
+  viewport.clientWidth /
+  viewport.clientHeight;
 
+ camera.updateProjectionMatrix();
 
-    const width =
-        viewport.clientWidth;
-
-
-    const height =
-        viewport.clientHeight;
-
-
-    if(
-        width <= 0 ||
-        height <= 0
-    )
-        return;
-
-
-    camera.aspect =
-        width / height;
-
-
-    camera.updateProjectionMatrix();
-
-
-    renderer.setSize(
-        width,
-        height
-    );
-
+ renderer.setSize(
+  viewport.clientWidth,
+  viewport.clientHeight
+ );
 }
 
+function loadFBX(){
 
-/* =========================
-   ANIMATE
-========================= */
+ statusBox.textContent="Loading dummy.fbx...";
+
+ if(model){
+  scene.remove(model);
+  model=null;
+ }
+
+ const loader = new THREE.FBXLoader();
+
+ fetch("./dummy.fbx")
+  .then(function(response){
+
+   if(!response.ok){
+    throw new Error(
+     "HTTP " + response.status
+    );
+   }
+
+   return response.arrayBuffer();
+  })
+  .then(function(buffer){
+
+   return loader.parse(buffer,"");
+  })
+  .then(function(object){
+
+   model=object;
+
+   model.scale.setScalar(0.01);
+
+   scene.add(model);
+
+   centerModel(model);
+
+   statusBox.textContent="dummy.fbx loaded";
+
+  })
+  .catch(function(error){
+
+   console.error(error);
+
+   statusBox.textContent=
+    "FBX gagal dibaca: " + error.message;
+  });
+}
+
+function centerModel(object){
+
+ const box = new THREE.Box3().setFromObject(object);
+
+ const size = new THREE.Vector3();
+ const center = new THREE.Vector3();
+
+ box.getSize(size);
+ box.getCenter(center);
+
+ object.position.x -= center.x;
+ object.position.z -= center.z;
+
+ const height=size.y;
+
+ if(height>0){
+  object.position.y -= box.min.y;
+ }
+
+ controls.target.set(
+  0,
+  Math.max(height/2,1),
+  0
+ );
+
+ camera.position.set(
+  height*1.5,
+  height*1.1,
+  height*1.5
+ );
+
+ controls.update();
+}
 
 function animate(){
 
-    requestAnimationFrame(
-        animate
-    );
+ requestAnimationFrame(animate);
 
-
-    controls.update();
-
-    updatePlayback();
-
-    renderer.render(
-        scene,
-        camera
-    );
-
+ renderer.render(scene,camera);
 }
+
+document.querySelectorAll(".bone").forEach(function(el){
+
+ el.addEventListener("click",function(){
+
+  document.querySelectorAll(".bone")
+   .forEach(function(x){
+    x.classList.remove("active");
+   });
+
+  el.classList.add("active");
+
+  selectedBone=findBone(
+   model,
+   el.dataset.bone
+  );
+
+  if(selectedBone){
+
+   document.getElementById("rx").value=
+    THREE.MathUtils.radToDeg(
+     selectedBone.rotation.x
+    ).toFixed(1);
+
+   document.getElementById("ry").value=
+    THREE.MathUtils.radToDeg(
+     selectedBone.rotation.y
+    ).toFixed(1);
+
+   document.getElementById("rz").value=
+    THREE.MathUtils.radToDeg(
+     selectedBone.rotation.z
+    ).toFixed(1);
+
+   document.getElementById("sx").value=
+    selectedBone.scale.x.toFixed(2);
+
+   document.getElementById("sy").value=
+    selectedBone.scale.y.toFixed(2);
+
+   document.getElementById("sz").value=
+    selectedBone.scale.z.toFixed(2);
+  }
+ });
+});
+
+function findBone(root,name){
+
+ if(!root) return null;
+
+ let result=null;
+
+ root.traverse(function(obj){
+
+  if(result) return;
+
+  const n=obj.name.toLowerCase();
+
+  const target=name.toLowerCase();
+
+  if(
+   n===target ||
+   n.replace(/[^a-z]/g,"")===
+   target.replace(/[^a-z]/g,"")
+  ){
+   result=obj;
+  }
+ });
+
+ return result;
+}
+
+function updateRotation(){
+
+ if(!selectedBone) return;
+
+ selectedBone.rotation.x=
+  THREE.MathUtils.degToRad(
+   parseFloat(document.getElementById("rx").value)||0
+  );
+
+ selectedBone.rotation.y=
+  THREE.MathUtils.degToRad(
+   parseFloat(document.getElementById("ry").value)||0
+  );
+
+ selectedBone.rotation.z=
+  THREE.MathUtils.degToRad(
+   parseFloat(document.getElementById("rz").value)||0
+  );
+}
+
+function updateScale(){
+
+ if(!selectedBone) return;
+
+ selectedBone.scale.set(
+  parseFloat(document.getElementById("sx").value)||1,
+  parseFloat(document.getElementById("sy").value)||1,
+  parseFloat(document.getElementById("sz").value)||1
+ );
+}
+
+["rx","ry","rz"].forEach(function(id){
+
+ document.getElementById(id)
+  .addEventListener("input",updateRotation);
+});
+
+["sx","sy","sz"].forEach(function(id){
+
+ document.getElementById(id)
+  .addEventListener("input",updateScale);
+});
+
+document.getElementById("resetBtn")
+ .addEventListener("click",function(){
+
+  camera.position.set(5,4,7);
+  controls.target.set(0,2,0);
+  controls.update();
+ });
+
+document.getElementById("reloadBtn")
+ .addEventListener("click",loadFBX);
+
+document.querySelectorAll(".frame")
+ .forEach(function(frame){
+
+  frame.addEventListener("click",function(){
+
+   document.querySelectorAll(".frame")
+    .forEach(function(x){
+     x.classList.remove("active");
+    });
+
+   frame.classList.add("active");
+
+   document.getElementById("frameText")
+    .textContent=
+    "Frame: " + frame.textContent;
+  });
+ });
+
+document.getElementById("playBtn")
+ .addEventListener("click",function(){
+  statusBox.textContent="Animation Play";
+ });
+
+document.getElementById("stopBtn")
+ .addEventListener("click",function(){
+  statusBox.textContent="Animation Stop";
+ });
 
 </script>
 
 </body>
-    </html>
+</html>
