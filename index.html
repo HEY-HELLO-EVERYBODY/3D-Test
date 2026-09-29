@@ -2,97 +2,207 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MizaxEngine - 3D Dummy & Baseplate</title>
-    <!-- Three.js Utama -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>MizaxEngine - Animation Studio Test</title>
+    <!-- Three.js & Controls -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <!-- Library Kontrol Kamera (OrbitControls buat Geser/Zoom di HP) -->
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/TransformControls.js"></script>
+    
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #080808; font-family: monospace; color: white; user-select: none; }
+        
+        /* UI OVERLAY CYBERPUNK */
+        #ui-container {
+            position: absolute; bottom: 10px; left: 10px; right: 10px;
+            background: rgba(13, 13, 13, 0.9); border: 1px solid #ff2a2a;
+            padding: 10px; box-sizing: border-box; display: flex; flex-direction: column; gap: 8px;
+        }
+
+        .btn-group { display: flex; gap: 5px; flex-wrap: wrap; }
+        
+        button {
+            background: #1a0000; color: #ff2a2a; border: 1px solid #ff2a2a;
+            padding: 8px 12px; font-family: monospace; font-weight: bold;
+            cursor: pointer; flex: 1; min-width: 70px;
+        }
+        button:active { background: #ff2a2a; color: #000; }
+        button.active { background: #ff2a2a; color: #000; }
+
+        /* TIMELINE SLIDER */
+        .timeline-container { display: flex; align-items: center; gap: 10px; }
+        input[type=range] {
+            flex: 1; accent-color: #ff2a2a; cursor: pointer;
+        }
+
+        #header {
+            position: absolute; top: 10px; left: 10px;
+            border: 1px solid #ff2a2a; padding: 6px 10px; background: rgba(0,0,0,0.8);
+            color: #ff2a2a; font-weight: bold; font-size: 11px;
+        }
+    </style>
 </head>
-<body style="margin: 0; background-color: #080808; overflow: hidden;">
+<body>
+
+    <div id="header">MIZAX_ENGINE // ANIMATION_TESTER</div>
+
+    <div id="ui-container">
+        <!-- MODE TRANSFORM -->
+        <div class="btn-group">
+            <button id="btn-translate" class="active" onclick="setMode('translate')">GESER</button>
+            <button id="btn-rotate" onclick="setMode('rotate')">PUTAR</button>
+            <button id="btn-keyframe" style="border-color: #00ff66; color: #00ff66;">+ KEYFRAME</button>
+        </div>
+
+        <!-- TIMELINE LINE UI -->
+        <div class="timeline-container">
+            <span style="font-size: 11px; color: #888;">FRAME:</span>
+            <input type="range" id="timeline" min="0" max="100" value="0">
+            <span id="frame-val" style="font-size: 11px; color: #ff2a2a;">0</span>
+        </div>
+
+        <!-- PLAYBACK CONTROLS -->
+        <div class="btn-group">
+            <button id="btn-play" onclick="togglePlay()">▶ PLAY</button>
+            <button onclick="clearKeyframes()" style="border-color: #555; color: #888;">↺ CLEAR</button>
+        </div>
+    </div>
 
     <script>
-        // 1. SCENE, KAMERA, & RENDERER
+        // 1. SCENE, CAMERA, RENDERER
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x0a0a0a);
 
         const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 5, 8); // Posisi awal kamera
+        camera.position.set(0, 4, 7);
 
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
 
-        // 2. KONTROL KAMERA INTERAKTIF (Bisa diusap pakai jari)
-        const controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true; // Gerakan kamera halus
-        controls.target.set(0, 2.5, 0); // Kamera fokus ke dada dummy
+        // 2. LIGHTING & GRID
+        scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+        const grid = new THREE.GridHelper(15, 15, 0xff2a2a, 0x333333);
+        scene.add(grid);
 
-        // 3. PENCAHAYAAN (LIGHTING)
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.7); // Cahaya ruangan
-        scene.add(ambientLight);
+        // 3. TARGET CUBES (OBJECT YANG DI-ANIMASI)
+        const geometry = new THREE.BoxGeometry(1.2, 1.2, 1.2);
+        const material = new THREE.MeshStandardMaterial({ color: 0xff2a2a, roughness: 0.3, metalness: 0.8 });
+        const cube = new THREE.Mesh(geometry, material);
+        cube.position.y = 0.6;
+        scene.add(cube);
 
-        const redSun = new THREE.DirectionalLight(0xff2a2a, 1.5); // Lampu bayangan merah Cyberpunk
-        redSun.position.set(5, 10, 5);
-        scene.add(redSun);
+        // 4. ORBIT & TRANSFORM CONTROLS (BISA DI-GESER/PUTAR PAKAI GIZMO)
+        const orbit = new THREE.OrbitControls(camera, renderer.domElement);
+        orbit.enableDamping = true;
 
-        // 4. ROBLOX BASEPLATE & GRID
-        const baseplateGeo = new THREE.BoxGeometry(20, 0.2, 20);
-        const baseplateMat = new THREE.MeshStandardMaterial({ color: 0x1f1f1f, roughness: 0.8 });
-        const baseplate = new THREE.Mesh(baseplateGeo, baseplateMat);
-        baseplate.position.y = -0.1;
-        scene.add(baseplate);
+        const transform = new THREE.TransformControls(camera, renderer.domElement);
+        transform.attach(cube);
+        scene.add(transform);
 
-        // Garis Grid Merah khas Roblox Baseplate
-        const gridHelper = new THREE.GridHelper(20, 20, 0xff2a2a, 0x444444);
-        gridHelper.position.y = 0.01;
-        scene.add(gridHelper);
+        // Matikan camera rotasi saat sedang geser/putar kubus
+        transform.addEventListener('dragging-changed', (e) => {
+            orbit.enabled = !e.value;
+        });
 
-        // 5. STRUKTUR DUMMY R6 (GROUP)
-        const dummy = new THREE.Group();
+        function setMode(mode) {
+            transform.setMode(mode);
+            document.getElementById('btn-translate').classList.toggle('active', mode === 'translate');
+            document.getElementById('btn-rotate').classList.toggle('active', mode === 'rotate');
+        }
 
-        // Material Tubuh
-        const bodyMat = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.5 });
-        const headMat = new THREE.MeshStandardMaterial({ color: 0x555555, roughness: 0.5 });
+        // 5. ANIMATION KEYFRAME SYSTEM
+        let keyframes = []; // Tempat menyimpan data koordinat [ { frame, pos, rot } ]
+        let isPlaying = false;
+        const timeline = document.getElementById('timeline');
+        const frameVal = document.getElementById('frame-val');
 
-        // A. Torso / Badan (Ukuran: 2 x 2 x 1)
-        const torso = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 1), bodyMat);
-        torso.position.y = 3;
-        dummy.add(torso);
+        // Rekam Keyframe saat tombol dipencet
+        document.getElementById('btn-keyframe').addEventListener('click', () => {
+            const currentFrame = parseInt(timeline.value);
+            
+            // Hapus keyframe di frame sama jika ada
+            keyframes = keyframes.filter(k => k.frame !== currentFrame);
 
-        // B. Head / Kepala (Ukuran: 1.25 x 1.25 x 1.25)
-        const head = new THREE.Mesh(new THREE.BoxGeometry(1.25, 1.25, 1.25), headMat);
-        head.position.set(0, 4.65, 0);
-        dummy.add(head);
+            // Simpan posisi & rotasi saat ini
+            keyframes.push({
+                frame: currentFrame,
+                pos: cube.position.clone(),
+                rot: cube.quaternion.clone()
+            });
 
-        // C. Tangan Kiri & Kanan (Ukuran: 1 x 2 x 1)
-        const armGeo = new THREE.BoxGeometry(1, 2, 1);
-        
-        const leftArm = new THREE.Mesh(armGeo, bodyMat);
-        leftArm.position.set(-1.55, 3, 0);
-        dummy.add(leftArm);
+            // Urutkan keyframe berdasarkan waktu frame
+            keyframes.sort((a, b) => a.frame - b.frame);
+            
+            alert(`Keyframe tersimpan di Frame ${currentFrame}! Total Keyframe: ${keyframes.length}`);
+        });
 
-        const rightArm = new THREE.Mesh(armGeo, bodyMat);
-        rightArm.position.set(1.55, 3, 0);
-        dummy.add(rightArm);
+        function togglePlay() {
+            isPlaying = !isPlaying;
+            document.getElementById('btn-play').innerText = isPlaying ? "⏸ PAUSE" : "▶ PLAY";
+            if (isPlaying) transform.detach(); // Sembunyikan gizmo saat diputar
+            else transform.attach(cube);
+        }
 
-        // D. Kaki Kiri & Kanan (Ukuran: 1 x 2 x 1)
-        const legGeo = new THREE.BoxGeometry(1, 2, 1);
+        function clearKeyframes() {
+            keyframes = [];
+            timeline.value = 0;
+            frameVal.innerText = "0";
+            alert("Semua Keyframe Dihapus!");
+        }
 
-        const leftLeg = new THREE.Mesh(legGeo, bodyMat);
-        leftLeg.position.set(-0.52, 1, 0);
-        dummy.add(leftLeg);
+        // Slider manual diusap
+        timeline.addEventListener('input', () => {
+            frameVal.innerText = timeline.value;
+            applyInterpolation(parseInt(timeline.value));
+        });
 
-        const rightLeg = new THREE.Mesh(legGeo, bodyMat);
-        rightLeg.position.set(0.52, 1, 0);
-        dummy.add(rightLeg);
+        // Rumus Interpolasi (Pergerakan Halus Antar Keyframe)
+        function applyInterpolation(frame) {
+            if (keyframes.length === 0) return;
 
-        scene.add(dummy);
+            // Jika hanya 1 keyframe
+            if (keyframes.length === 1) {
+                cube.position.copy(keyframes[0].pos);
+                cube.quaternion.copy(keyframes[0].rot);
+                return;
+            }
 
-        // 6. ANIMATE LOOP & RESIZE HANDLER
+            // Cari 2 keyframe pengapit
+            let prev = keyframes[0];
+            let next = keyframes[keyframes.length - 1];
+
+            for (let i = 0; i < keyframes.length; i++) {
+                if (keyframes[i].frame <= frame) prev = keyframes[i];
+                if (keyframes[i].frame >= frame && keyframes[i].frame < next.frame) next = keyframes[i];
+            }
+
+            if (prev.frame === next.frame) {
+                cube.position.copy(prev.pos);
+                cube.quaternion.copy(prev.rot);
+            } else {
+                // Hitung Rasio Kemajuan (Alpha 0.0 - 1.0)
+                const alpha = (frame - prev.frame) / (next.frame - prev.frame);
+                
+                // Interpolasi Posisi (LERP) & Rotasi (SLERP)
+                cube.position.lerpVectors(prev.pos, next.pos, alpha);
+                cube.quaternion.slerpQuaternions(prev.rot, next.rot, alpha);
+            }
+        }
+
+        // 6. ANIMATE LOOP
         function animate() {
             requestAnimationFrame(animate);
-            controls.update(); // Update posisi kamera pas diusap
+            orbit.update();
+
+            if (isPlaying) {
+                let current = parseInt(timeline.value) + 1;
+                if (current > 100) current = 0; // Loop kembali ke awal
+                timeline.value = current;
+                frameVal.innerText = current;
+                applyInterpolation(current);
+            }
+
             renderer.render(scene, camera);
         }
         animate();
