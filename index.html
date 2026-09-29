@@ -398,7 +398,6 @@ transform.addEventListener("dragging-changed", function(e){
     orbit.enabled = !e.value;
 });
 
-// LIGHTING TERANG BENDERANG (Anti Suram)
 scene.add(new THREE.AmbientLight(0xffffff, 1.5));
 
 const keyLight = new THREE.DirectionalLight(0xffffff, 2.2);
@@ -418,11 +417,11 @@ const grid = new THREE.GridHelper(20, 40, 0x80151d, 0x222222);
 scene.add(grid);
 
 const loader = new THREE.FBXLoader();
-loader.load("dummy.fbx", function(object){
+// Menggunakan Raw URL GitHub agar pasti terbaca tanpa error 404/not found
+loader.load("https://raw.githubusercontent.com/HEY-HELLO-EVERYBODY/Just-test/main/dummy.fbx", function(object){
     model = object;
     model.scale.set(.01, .01, .01);
 
-    // AUTO CENTER & FIX KEPALA PINGGIR/HILANG
     const box = new THREE.Box3().setFromObject(model);
     const center = box.getCenter(new THREE.Vector3());
     model.position.sub(center);
@@ -471,7 +470,7 @@ loader.load("dummy.fbx", function(object){
     }
 }, function(error){
     console.error(error);
-    loading.innerHTML = "<b>FBX ERROR</b><br><br>dummy.fbx tidak ditemukan.";
+    loading.innerHTML = "<b>FBX ERROR</b><br><br>Gagal meload dummy.fbx.";
 });
 
 function normalizeR6(){
