@@ -3,96 +3,133 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+
 <title>MizaxEngine - R6 Animation Studio</title>
 
 <style>
-*{box-sizing:border-box}
-body{
+*{
+ box-sizing:border-box;
+}
+
+html,body{
  margin:0;
+ width:100%;
+ height:100%;
  overflow:hidden;
  background:#090909;
  color:#eee;
- font-family:Arial,sans-serif
+ font-family:Arial,sans-serif;
 }
+
 #app{
  display:flex;
  width:100vw;
- height:100vh
+ height:100vh;
 }
+
 #left,#right{
- width:230px;
+ width:220px;
+ flex-shrink:0;
  background:#111;
  border-color:#292929;
  border-style:solid;
  position:relative;
- z-index:5
+ z-index:5;
 }
-#left{border-width:0 1px 0 0}
-#right{border-width:0 0 0 1px}
+
+#left{
+ border-width:0 1px 0 0;
+}
+
+#right{
+ border-width:0 0 0 1px;
+}
 
 #center{
  flex:1;
- position:relative;
  min-width:0;
- background:#181818
+ position:relative;
+ background:#181818;
 }
+
 #viewport{
  position:absolute;
- inset:0
+ inset:0;
 }
+
 canvas{
- display:block
+ display:block;
 }
 
 .title{
- padding:14px;
+ padding:13px;
  font-size:17px;
  font-weight:bold;
  color:#ff3030;
- border-bottom:1px solid #292929
+ border-bottom:1px solid #292929;
 }
+
 .section{
  padding:10px;
- border-bottom:1px solid #292929
+ border-bottom:1px solid #292929;
 }
+
 .section b{
  display:block;
  margin-bottom:8px;
  font-size:12px;
- color:#aaa
+ color:#aaa;
 }
+
 button{
  width:100%;
  padding:9px;
  margin-bottom:6px;
  border:1px solid #333;
+ border-radius:5px;
  background:#1d1d1d;
  color:#eee;
- border-radius:5px
 }
-button:hover{
- background:#292929
+
+button:active{
+ background:#3b1111;
 }
+
 input{
  width:100%;
- background:#191919;
- color:white;
- border:1px solid #333;
  padding:7px;
- margin-bottom:5px
+ margin-bottom:6px;
+ border:1px solid #333;
+ border-radius:4px;
+ background:#191919;
+ color:#fff;
 }
+
 .bone{
  padding:8px;
- background:#181818;
- border:1px solid #282828;
  margin-bottom:4px;
+ border:1px solid #282828;
  border-radius:4px;
+ background:#181818;
  cursor:pointer;
- font-size:13px
+ font-size:13px;
 }
-.bone:hover,.bone.active{
+
+.bone.active{
  background:#3b1111;
- border-color:#ff3030
+ border-color:#ff3030;
+}
+
+#status{
+ position:absolute;
+ top:8px;
+ left:8px;
+ z-index:10;
+ padding:7px 10px;
+ border:1px solid #333;
+ border-radius:5px;
+ background:#111d;
+ font-size:11px;
 }
 
 #timeline{
@@ -101,67 +138,73 @@ input{
  right:0;
  bottom:0;
  height:145px;
+ z-index:4;
  background:#0d0d0d;
  border-top:1px solid #333;
- z-index:4
 }
+
 #timelineTop{
- height:35px;
+ height:38px;
  display:flex;
  align-items:center;
  gap:6px;
  padding:5px;
- border-bottom:1px solid #292929
+ border-bottom:1px solid #292929;
 }
+
 #timelineTop button{
  width:auto;
  margin:0;
- padding:5px 12px
+ padding:6px 12px;
 }
+
+#frameText{
+ font-size:12px;
+ color:#aaa;
+}
+
 #frames{
  display:flex;
  gap:4px;
  padding:10px;
- overflow-x:auto
+ overflow-x:auto;
 }
+
 .frame{
  min-width:35px;
  height:35px;
- border:1px solid #333;
- background:#191919;
  display:flex;
  align-items:center;
  justify-content:center;
+ border:1px solid #333;
+ border-radius:3px;
+ background:#191919;
  cursor:pointer;
- border-radius:3px
-}
-.frame.active{
- background:#8d1717;
- border-color:#ff3030
 }
 
-#status{
- position:absolute;
- top:8px;
- left:8px;
- padding:6px 9px;
- background:#111d;
- border:1px solid #333;
- border-radius:4px;
- font-size:11px;
- z-index:10
+.frame.active{
+ background:#8d1717;
+ border-color:#ff3030;
 }
 
 @media(max-width:700px){
+
  #left,#right{
-  width:170px
+  width:165px;
  }
+
  .title{
   font-size:13px;
-  padding:10px
+  padding:10px;
  }
+
  .section{
-  padding:7px
+  padding:7px;
+ }
+
+ .bone{
+  padding:7px;
+  font-size:12px;
  }
 }
 </style>
@@ -171,39 +214,91 @@ input{
 
 <div id="app">
 
+<!-- LEFT PANEL -->
 <div id="left">
- <div class="title">MizaxEngine</div>
+
+ <div class="title">
+  MizaxEngine
+ </div>
 
  <div class="section">
+
   <b>R6 BODY</b>
 
-  <div class="bone" data-bone="Head">Head</div>
-  <div class="bone" data-bone="Torso">Torso</div>
-  <div class="bone" data-bone="Left Arm">Left Arm</div>
-  <div class="bone" data-bone="Right Arm">Right Arm</div>
-  <div class="bone" data-bone="Left Leg">Left Leg</div>
-  <div class="bone" data-bone="Right Leg">Right Leg</div>
+  <div class="bone" data-bone="Head">
+   Head
+  </div>
+
+  <div class="bone" data-bone="Torso">
+   Torso
+  </div>
+
+  <div class="bone" data-bone="Left Arm">
+   Left Arm
+  </div>
+
+  <div class="bone" data-bone="Right Arm">
+   Right Arm
+  </div>
+
+  <div class="bone" data-bone="Left Leg">
+   Left Leg
+  </div>
+
+  <div class="bone" data-bone="Right Leg">
+   Right Leg
+  </div>
+
  </div>
 
  <div class="section">
+
   <b>MODEL</b>
-  <button id="resetBtn">Reset Camera</button>
-  <button id="reloadBtn">Reload FBX</button>
+
+  <button id="resetBtn">
+   Reset Camera
+  </button>
+
+  <button id="reloadBtn">
+   Reload FBX
+  </button>
+
  </div>
+
 </div>
 
+
+<!-- CENTER -->
 <div id="center">
+
  <div id="viewport"></div>
- <div id="status">Loading dummy.fbx...</div>
+
+ <div id="status">
+  Loading dummy.fbx...
+ </div>
+
 
  <div id="timeline">
+
   <div id="timelineTop">
-   <button id="playBtn">▶ Play</button>
-   <button id="stopBtn">■ Stop</button>
-   <span id="frameText">Frame: 0</span>
+
+   <button id="playBtn">
+    ▶ Play
+   </button>
+
+   <button id="stopBtn">
+    ■ Stop
+   </button>
+
+   <span id="frameText">
+    Frame: 0
+   </span>
+
   </div>
 
+
   <div id="frames">
+
    <div class="frame active">0</div>
    <div class="frame">1</div>
    <div class="frame">2</div>
@@ -215,15 +310,24 @@ input{
    <div class="frame">8</div>
    <div class="frame">9</div>
    <div class="frame">10</div>
+
   </div>
+
  </div>
+
 </div>
 
+
+<!-- RIGHT PANEL -->
 <div id="right">
 
- <div class="title">Properties</div>
+ <div class="title">
+  Properties
+ </div>
+
 
  <div class="section">
+
   <b>ROTATION</b>
 
   <label>X</label>
@@ -234,23 +338,37 @@ input{
 
   <label>Z</label>
   <input id="rz" type="number" value="0">
+
  </div>
 
+
  <div class="section">
+
   <b>SCALE</b>
 
   <input id="sx" type="number" value="1" step="0.1">
+
   <input id="sy" type="number" value="1" step="0.1">
+
   <input id="sz" type="number" value="1" step="0.1">
+
  </div>
 
 </div>
 
 </div>
 
+
+<!-- THREE.JS -->
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+<!-- IMPORTANT: FBX compression dependency -->
+<script src="https://cdn.jsdelivr.net/npm/fflate@0.7.4/umd/index.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
+
 
 <script>
 
@@ -258,66 +376,139 @@ let scene;
 let camera;
 let renderer;
 let controls;
+
 let model = null;
 let selectedBone = null;
 
-const viewport = document.getElementById("viewport");
-const statusBox = document.getElementById("status");
+const viewport =
+ document.getElementById("viewport");
+
+const statusBox =
+ document.getElementById("status");
 
 init();
+
 loadFBX();
+
+
+/* =========================
+   INITIALIZE
+========================= */
 
 function init(){
 
  scene = new THREE.Scene();
- scene.background = new THREE.Color(0x181818);
 
- camera = new THREE.PerspectiveCamera(
-  45,
-  viewport.clientWidth / viewport.clientHeight,
-  0.1,
-  10000
+ scene.background =
+  new THREE.Color(0x181818);
+
+
+ camera =
+  new THREE.PerspectiveCamera(
+   45,
+   viewport.clientWidth /
+   viewport.clientHeight,
+   0.1,
+   10000
+  );
+
+
+ camera.position.set(
+  5,
+  4,
+  7
  );
 
- camera.position.set(5,4,7);
 
- renderer = new THREE.WebGLRenderer({
-  antialias:true
- });
+ renderer =
+  new THREE.WebGLRenderer({
+   antialias:true
+  });
 
- renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
- renderer.setSize(viewport.clientWidth,viewport.clientHeight);
 
- viewport.appendChild(renderer.domElement);
+ renderer.setPixelRatio(
+  Math.min(
+   window.devicePixelRatio,
+   2
+  )
+ );
 
- controls = new THREE.OrbitControls(
-  camera,
+
+ renderer.setSize(
+  viewport.clientWidth,
+  viewport.clientHeight
+ );
+
+
+ viewport.appendChild(
   renderer.domElement
  );
 
- controls.target.set(0,2,0);
+
+ controls =
+  new THREE.OrbitControls(
+   camera,
+   renderer.domElement
+  );
+
+
+ controls.target.set(
+  0,
+  2,
+  0
+ );
+
  controls.update();
 
- const ambient = new THREE.AmbientLight(0xffffff,0.7);
+
+ const ambient =
+  new THREE.AmbientLight(
+   0xffffff,
+   0.7
+  );
+
  scene.add(ambient);
 
- const light = new THREE.DirectionalLight(0xffffff,1.2);
- light.position.set(5,10,5);
+
+ const light =
+  new THREE.DirectionalLight(
+   0xffffff,
+   1.2
+  );
+
+ light.position.set(
+  5,
+  10,
+  5
+ );
+
  scene.add(light);
 
- const grid = new THREE.GridHelper(
-  20,
-  20,
-  0x555555,
-  0x292929
- );
+
+ const grid =
+  new THREE.GridHelper(
+   20,
+   20,
+   0x555555,
+   0x292929
+  );
 
  scene.add(grid);
 
- window.addEventListener("resize",resize);
+
+ window.addEventListener(
+  "resize",
+  resize
+ );
+
 
  animate();
 }
+
+
+/* =========================
+   RESIZE
+========================= */
 
 function resize(){
 
@@ -325,7 +516,9 @@ function resize(){
   viewport.clientWidth /
   viewport.clientHeight;
 
+
  camera.updateProjectionMatrix();
+
 
  renderer.setSize(
   viewport.clientWidth,
@@ -333,247 +526,548 @@ function resize(){
  );
 }
 
+
+/* =========================
+   LOAD FBX
+========================= */
+
 function loadFBX(){
 
- statusBox.textContent="Loading dummy.fbx...";
+ statusBox.textContent =
+  "Loading dummy.fbx...";
+
 
  if(model){
+
   scene.remove(model);
-  model=null;
+
+  model = null;
+
  }
 
- const loader = new THREE.FBXLoader();
+
+ const loader =
+  new THREE.FBXLoader();
+
 
  fetch("./dummy.fbx")
+
   .then(function(response){
 
    if(!response.ok){
+
     throw new Error(
-     "HTTP " + response.status
+     "HTTP " +
+     response.status
     );
+
    }
 
    return response.arrayBuffer();
+
   })
+
   .then(function(buffer){
 
-   return loader.parse(buffer,"");
+   const object =
+    loader.parse(
+     buffer,
+     ""
+    );
+
+   return object;
+
   })
+
   .then(function(object){
 
-   model=object;
+   model = object;
 
-   model.scale.setScalar(0.01);
+
+   /*
+    FBX sering ukurannya terlalu besar.
+    0.01 dibuat sebagai default Roblox-style.
+   */
+
+   model.scale.setScalar(
+    0.01
+   );
+
 
    scene.add(model);
 
-   centerModel(model);
 
-   statusBox.textContent="dummy.fbx loaded";
+   centerModel(
+    model
+   );
+
+
+   statusBox.textContent =
+    "dummy.fbx loaded";
+
 
   })
+
   .catch(function(error){
 
-   console.error(error);
+   console.error(
+    "FBX ERROR:",
+    error
+   );
 
-   statusBox.textContent=
-    "FBX gagal dibaca: " + error.message;
+
+   statusBox.textContent =
+    "FBX gagal: " +
+    error.message;
+
   });
+
 }
+
+
+/* =========================
+   CENTER MODEL
+========================= */
 
 function centerModel(object){
 
- const box = new THREE.Box3().setFromObject(object);
+ const box =
+  new THREE.Box3()
+   .setFromObject(object);
 
- const size = new THREE.Vector3();
- const center = new THREE.Vector3();
 
- box.getSize(size);
- box.getCenter(center);
+ const size =
+  new THREE.Vector3();
 
- object.position.x -= center.x;
- object.position.z -= center.z;
 
- const height=size.y;
+ const center =
+  new THREE.Vector3();
 
- if(height>0){
-  object.position.y -= box.min.y;
- }
+
+ box.getSize(
+  size
+ );
+
+
+ box.getCenter(
+  center
+ );
+
+
+ object.position.x -=
+  center.x;
+
+
+ object.position.z -=
+  center.z;
+
+
+ object.position.y -=
+  box.min.y;
+
+
+ const height =
+  Math.max(
+   size.y,
+   1
+  );
+
 
  controls.target.set(
   0,
-  Math.max(height/2,1),
+  height / 2,
   0
  );
 
+
  camera.position.set(
-  height*1.5,
-  height*1.1,
-  height*1.5
+  height * 1.5,
+  height * 1.1,
+  height * 1.5
  );
 
+
  controls.update();
+
 }
+
+
+/* =========================
+   ANIMATION LOOP
+========================= */
 
 function animate(){
 
- requestAnimationFrame(animate);
+ requestAnimationFrame(
+  animate
+ );
 
- renderer.render(scene,camera);
+
+ renderer.render(
+  scene,
+  camera
+ );
+
 }
 
-document.querySelectorAll(".bone").forEach(function(el){
 
- el.addEventListener("click",function(){
+/* =========================
+   BONE SELECTION
+========================= */
 
-  document.querySelectorAll(".bone")
-   .forEach(function(x){
-    x.classList.remove("active");
-   });
+document
+ .querySelectorAll(".bone")
+ .forEach(function(el){
 
-  el.classList.add("active");
+  el.addEventListener(
+   "click",
+   function(){
 
-  selectedBone=findBone(
-   model,
-   el.dataset.bone
+    document
+     .querySelectorAll(".bone")
+     .forEach(function(x){
+
+      x.classList.remove(
+       "active"
+      );
+
+     });
+
+
+    el.classList.add(
+     "active"
+    );
+
+
+    selectedBone =
+     findBone(
+      model,
+      el.dataset.bone
+     );
+
+
+    if(!selectedBone)
+     return;
+
+
+    document.getElementById("rx").value =
+     THREE.MathUtils.radToDeg(
+      selectedBone.rotation.x
+     ).toFixed(1);
+
+
+    document.getElementById("ry").value =
+     THREE.MathUtils.radToDeg(
+      selectedBone.rotation.y
+     ).toFixed(1);
+
+
+    document.getElementById("rz").value =
+     THREE.MathUtils.radToDeg(
+      selectedBone.rotation.z
+     ).toFixed(1);
+
+
+    document.getElementById("sx").value =
+     selectedBone.scale.x.toFixed(2);
+
+
+    document.getElementById("sy").value =
+     selectedBone.scale.y.toFixed(2);
+
+
+    document.getElementById("sz").value =
+     selectedBone.scale.z.toFixed(2);
+
+   }
   );
 
-  if(selectedBone){
-
-   document.getElementById("rx").value=
-    THREE.MathUtils.radToDeg(
-     selectedBone.rotation.x
-    ).toFixed(1);
-
-   document.getElementById("ry").value=
-    THREE.MathUtils.radToDeg(
-     selectedBone.rotation.y
-    ).toFixed(1);
-
-   document.getElementById("rz").value=
-    THREE.MathUtils.radToDeg(
-     selectedBone.rotation.z
-    ).toFixed(1);
-
-   document.getElementById("sx").value=
-    selectedBone.scale.x.toFixed(2);
-
-   document.getElementById("sy").value=
-    selectedBone.scale.y.toFixed(2);
-
-   document.getElementById("sz").value=
-    selectedBone.scale.z.toFixed(2);
-  }
  });
-});
 
-function findBone(root,name){
 
- if(!root) return null;
+/* =========================
+   FIND BONE
+========================= */
 
- let result=null;
+function findBone(
+ root,
+ name
+){
 
- root.traverse(function(obj){
+ if(!root)
+  return null;
 
-  if(result) return;
 
-  const n=obj.name.toLowerCase();
+ let result = null;
 
-  const target=name.toLowerCase();
 
-  if(
-   n===target ||
-   n.replace(/[^a-z]/g,"")===
-   target.replace(/[^a-z]/g,"")
-  ){
-   result=obj;
+ root.traverse(
+  function(obj){
+
+   if(result)
+    return;
+
+
+   const objectName =
+    obj.name
+     .toLowerCase()
+     .replace(
+      /[^a-z0-9]/g,
+      ""
+     );
+
+
+   const targetName =
+    name
+     .toLowerCase()
+     .replace(
+      /[^a-z0-9]/g,
+      ""
+     );
+
+
+   if(
+    objectName ===
+    targetName
+   ){
+
+    result = obj;
+
+   }
+
   }
- });
+ );
+
 
  return result;
 }
 
+
+/* =========================
+   ROTATION
+========================= */
+
 function updateRotation(){
 
- if(!selectedBone) return;
+ if(!selectedBone)
+  return;
 
- selectedBone.rotation.x=
+
+ selectedBone.rotation.x =
   THREE.MathUtils.degToRad(
-   parseFloat(document.getElementById("rx").value)||0
+   parseFloat(
+    document.getElementById(
+     "rx"
+    ).value
+   ) || 0
   );
 
- selectedBone.rotation.y=
+
+ selectedBone.rotation.y =
   THREE.MathUtils.degToRad(
-   parseFloat(document.getElementById("ry").value)||0
+   parseFloat(
+    document.getElementById(
+     "ry"
+    ).value
+   ) || 0
   );
 
- selectedBone.rotation.z=
+
+ selectedBone.rotation.z =
   THREE.MathUtils.degToRad(
-   parseFloat(document.getElementById("rz").value)||0
+   parseFloat(
+    document.getElementById(
+     "rz"
+    ).value
+   ) || 0
   );
+
 }
+
+
+/* =========================
+   SCALE
+========================= */
 
 function updateScale(){
 
- if(!selectedBone) return;
+ if(!selectedBone)
+  return;
+
 
  selectedBone.scale.set(
-  parseFloat(document.getElementById("sx").value)||1,
-  parseFloat(document.getElementById("sy").value)||1,
-  parseFloat(document.getElementById("sz").value)||1
+  parseFloat(
+   document.getElementById(
+    "sx"
+   ).value
+  ) || 1,
+
+  parseFloat(
+   document.getElementById(
+    "sy"
+   ).value
+  ) || 1,
+
+  parseFloat(
+   document.getElementById(
+    "sz"
+   ).value
+  ) || 1
  );
+
 }
 
-["rx","ry","rz"].forEach(function(id){
 
- document.getElementById(id)
-  .addEventListener("input",updateRotation);
-});
+/* =========================
+   INPUT EVENTS
+========================= */
 
-["sx","sy","sz"].forEach(function(id){
+["rx","ry","rz"]
+ .forEach(function(id){
 
- document.getElementById(id)
-  .addEventListener("input",updateScale);
-});
+  document
+   .getElementById(id)
+   .addEventListener(
+    "input",
+    updateRotation
+   );
 
-document.getElementById("resetBtn")
- .addEventListener("click",function(){
-
-  camera.position.set(5,4,7);
-  controls.target.set(0,2,0);
-  controls.update();
  });
 
-document.getElementById("reloadBtn")
- .addEventListener("click",loadFBX);
 
-document.querySelectorAll(".frame")
+["sx","sy","sz"]
+ .forEach(function(id){
+
+  document
+   .getElementById(id)
+   .addEventListener(
+    "input",
+    updateScale
+   );
+
+ });
+
+
+/* =========================
+   RESET CAMERA
+========================= */
+
+document
+ .getElementById(
+  "resetBtn"
+ )
+ .addEventListener(
+  "click",
+  function(){
+
+   camera.position.set(
+    5,
+    4,
+    7
+   );
+
+
+   controls.target.set(
+    0,
+    2,
+    0
+   );
+
+
+   controls.update();
+
+  }
+ );
+
+
+/* =========================
+   RELOAD
+========================= */
+
+document
+ .getElementById(
+  "reloadBtn"
+ )
+ .addEventListener(
+  "click",
+  loadFBX
+ );
+
+
+/* =========================
+   TIMELINE
+========================= */
+
+document
+ .querySelectorAll(".frame")
  .forEach(function(frame){
 
-  frame.addEventListener("click",function(){
+  frame.addEventListener(
+   "click",
+   function(){
 
-   document.querySelectorAll(".frame")
-    .forEach(function(x){
-     x.classList.remove("active");
-    });
+    document
+     .querySelectorAll(".frame")
+     .forEach(
+      function(x){
 
-   frame.classList.add("active");
+       x.classList.remove(
+        "active"
+       );
 
-   document.getElementById("frameText")
-    .textContent=
-    "Frame: " + frame.textContent;
-  });
+      }
+     );
+
+
+    frame.classList.add(
+     "active"
+    );
+
+
+    document.getElementById(
+     "frameText"
+    ).textContent =
+     "Frame: " +
+     frame.textContent;
+
+   }
+  );
+
  });
 
-document.getElementById("playBtn")
- .addEventListener("click",function(){
-  statusBox.textContent="Animation Play";
- });
 
-document.getElementById("stopBtn")
- .addEventListener("click",function(){
-  statusBox.textContent="Animation Stop";
- });
+/* =========================
+   PLAY / STOP
+========================= */
+
+document
+ .getElementById(
+  "playBtn"
+ )
+ .addEventListener(
+  "click",
+  function(){
+
+   statusBox.textContent =
+    "Animation Play";
+
+  }
+ );
+
+
+document
+ .getElementById(
+  "stopBtn"
+ )
+ .addEventListener(
+  "click",
+  function(){
+
+   statusBox.textContent =
+    "Animation Stop";
+
+  }
+ );
 
 </script>
 
